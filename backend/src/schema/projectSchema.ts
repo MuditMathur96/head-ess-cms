@@ -1,9 +1,9 @@
 import {z} from 'zod';
 
-const userId = z.string({
+export const userId = z.string({
     message:"userId is required"
 })
-const projectId=z.string({
+export const projectId=z.string({
     message:"projectId is required"
 })
 
