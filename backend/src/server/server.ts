@@ -1,5 +1,6 @@
 import express from 'express';
 import { PORT } from '@app/config/config';
+import morgan from 'morgan';
 
 //routes
 import authRoutes from "@app/routes/auth.route";
@@ -14,14 +15,15 @@ export function startServer(){
 
     //register middlewares
     app.use(express.json());
+    app.use(morgan("dev"))
 
 
     //register routes
     app.use("/api/v1/auth",authRoutes);
     app.use("/api/v1/project",projectRoutes);
-    app.use("api/v1/content",contentRoutes);
-    app.use("api/v1/uploads",uploadRoutes);
-    app.use("api/v1/schema",schemaRoutes);
+    app.use("/api/v1/content",contentRoutes);
+    app.use("/api/v1/uploads",uploadRoutes);
+    app.use("/api/v1/schema",schemaRoutes);
     app.use("/uploads",express.static("uploads"));
 
     app.listen(PORT,()=>{

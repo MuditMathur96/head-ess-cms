@@ -13,7 +13,7 @@ export default class ProjectController{
             
             const isValid = createProjectSchema.safeParse({name,description,userId});
             
-            if(!isValid.success) generateErrorResponse(res,401,isValid.error);
+            if(!isValid.success) return generateErrorResponse(res,400,isValid.error);
 
             const project = await ProjectService.createProject(name,description,userId);
             generateSuccessResponse(res,{project},201);
@@ -25,7 +25,7 @@ export default class ProjectController{
     public static async getProjects(req:Request,res:Response){
         const {userId} = req.body;
 
-        if(!userId) generateErrorResponse(res,401,"Access Denied");
+        if(!userId)  return generateErrorResponse(res,400,"Access Denied");
         try{
             
             
@@ -44,11 +44,11 @@ export default class ProjectController{
         try{
             
             const isValid = getProjectByIdSchema.safeParse({projectId,userId});
-            if(!isValid.success) generateErrorResponse(res,401,isValid.error);
+            if(!isValid.success) return generateErrorResponse(res,400,isValid.error);
 
             const project = await ProjectService.getProjectById(projectId,userId);
             
-            if(!project) generateErrorResponse(res,404,"project not found!");
+            if(!project) return generateErrorResponse(res,404,"project not found!");
 
 
             generateSuccessResponse(res,{project},200);
@@ -65,10 +65,10 @@ export default class ProjectController{
             
             const isValid = updateProjectSchema.safeParse({name,description,userId,projectId});
             
-            if(!isValid.success) generateErrorResponse(res,403,isValid.error);
+            if(!isValid.success) return generateErrorResponse(res,403,isValid.error);
 
             const project = await ProjectService.updateProject(projectId,userId,name,description);
-            if(!project) generateErrorResponse(res,404,"project not found!");
+            if(!project) return  generateErrorResponse(res,404,"project not found!");
             generateSuccessResponse(res,{project},200);
 
         }catch(e:any){
@@ -83,10 +83,10 @@ export default class ProjectController{
             
             const isValid = deleteProjectSchema.safeParse({projectId,userId})
             
-            if(!isValid.success) generateErrorResponse(res,403,isValid.error);
+            if(!isValid.success) return generateErrorResponse(res,403,isValid.error);
 
             const project = await ProjectService.deleteProject(projectId,userId);
-            if(!project?.deletedCount) generateErrorResponse(res,404,"project not found!");
+            if(!project?.deletedCount) return  generateErrorResponse(res,404,"project not found!");
             generateSuccessResponse(res,{project},200);
 
         }catch(e:any){

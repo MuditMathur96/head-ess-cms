@@ -10,7 +10,7 @@ export default class SchemaController{
 
         const isValid = createSchemaSchema.safeParse({projectId,name,fields});
 
-        if(!isValid.success) return generateErrorResponse(res,401,isValid.error);
+        if(!isValid.success) return generateErrorResponse(res,403,isValid.error);
 
         try{
             const schema = await SchemaService.createSchema(projectId,name,fields);

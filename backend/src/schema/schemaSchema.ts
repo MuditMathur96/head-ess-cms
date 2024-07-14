@@ -13,7 +13,8 @@ const fieldSchema =z.object({
 export const fields = z.array(fieldSchema);
 
 export const createSchemaSchema= z.object({
-    schemaId,
+    //schemaId,
+    name:z.string({message:"name is required"}),
     fields,
     projectId
 });

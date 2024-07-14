@@ -1,6 +1,13 @@
 import Content,{IContent,ContentType} from "@app/models/content";
+import { LifecycleHooks } from "@app/types";
 
 export default class ContentService{
+    private static hooks:LifecycleHooks={};
+
+    public static registerHooks(hooks:LifecycleHooks):void{
+        this.hooks=hooks;
+    }
+
 
     /**
      * 
@@ -11,8 +18,15 @@ export default class ContentService{
      */
     public static async createContent(projectId:string,type:ContentType,data:any):Promise<IContent>{
 
+        if(this.hooks.beforeSave){
+            await this.hooks.beforeSave(data);
+        }
         const content = new Content({projectId,type,data});
         await content.save();
+
+        if(this.hooks.afterSave){
+            await this.hooks.afterSave(data);
+        }
         return content;
     }
     /**
@@ -42,12 +56,29 @@ export default class ContentService{
      */
     public static async updateContent(contentId:string,data:any):Promise<IContent | null>{
 
-        return await Content.findOneAndUpdate({_id:contentId},{data},{new:true});
+        if(this.hooks.beforeSave){
+            await this.hooks.beforeSave(data);
+        }
+        const content = await Content.findOneAndUpdate({_id:contentId},{data},{new:true});
 
+        if(this.hooks.afterSave){
+            await this.hooks.afterSave(data);
+        }
+        return content;
     }
     public static async deleteContent(contentId:string):Promise<IContent | null>{
 
-        return await Content.findOneAndDelete({_id:contentId});
+        const content = Content.findById(contentId);
+        if(this.hooks.beforeDelete){
+            await this.hooks.beforeDelete(content);
+        }
+        const deletedContent = await Content.findOneAndDelete({_id:contentId});
+        
+        if(this.hooks.afterDelete){
+            await this.hooks.afterDelete(deletedContent);
+        }
+
+        return content;
     }
 
 
