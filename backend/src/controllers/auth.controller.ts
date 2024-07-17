@@ -1,7 +1,7 @@
 import {Request,Response} from 'express';
 import authService from '@app/services/auth.service';
 
-import {loginSchema, registerSchema} from '@app/schema/authSchemas';
+import {loginSchema, registerSchema, userIdSchema} from '@app/schema/authSchemas';
 import { generateErrorResponse, generateSuccessResponse } from '@app/utils/response';
 
 export default class AuthController{
@@ -44,6 +44,25 @@ export default class AuthController{
             generateErrorResponse(res,500,e.message);
         }
     }
+    public static async userDetails(req:Request,res:Response):Promise<void>{
+        const {userId} = req.body;
+        try{
+            const isValid = userIdSchema.safeParse(userId);
+            if(!isValid.success){
+                generateErrorResponse(res,400,isValid.error);
+            }
+
+            const user = await authService.getUserDetails(userId);
+            generateSuccessResponse(res,{
+                ...user?.toJSON()
+            },200);
+            
+        }catch(e:any){  
+            generateErrorResponse(res,500,e.message);
+        }
+    }
+
+
 }
 
 

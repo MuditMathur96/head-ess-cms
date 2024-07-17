@@ -1,5 +1,9 @@
 import {z} from 'zod';
 
+export const userIdSchema = z.string({
+    message:"userId is required!"
+})
+
 export const emailType = z.string().email({
     message:"email must be an valid email"
 });

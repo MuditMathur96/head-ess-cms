@@ -1,4 +1,5 @@
 import Project, { IProject } from '@app/models/project';
+import { Aggregate, PipelineStage } from 'mongoose';
 
 export default class ProjectService{
     /**
@@ -21,7 +22,22 @@ export default class ProjectService{
      */
     public static async getProjects(userId:string):Promise<IProject[]>{
 
-        const projects = await Project.find({userId});
+        const pipeline:PipelineStage[] =[
+            {
+                $match:{
+                    userId
+                }
+            },{
+                $lookup:{
+                    from:"schemas",
+                    localField:"_id",
+                    foreignField:"projectId",
+                    as:"schemas"
+                }
+            }
+        ]
+        const projects = await Project.aggregate(pipeline);
+        //const projects = await Project.find({userId}).populate();
         return projects;
     }
     /**

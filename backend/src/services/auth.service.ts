@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import User,{IUser} from '@app/models/user';
 import { JWTSecret } from '@app/config/config';
+import user from '@app/models/user';
 /**
  * Authentication service
  */
@@ -58,5 +59,17 @@ export default class AuthService{
      */
     public static verifyToken(token:string):any{
         return jwt.verify(token,JWTSecret);
+    }
+
+    /**
+     * 
+     * @param userId 
+     * @returns User or null
+     */
+    public static async getUserDetails(userId:string):Promise<IUser | null>{
+        const user = await User.findById(userId);
+        return user;
+
+
     }
 }

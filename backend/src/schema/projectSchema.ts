@@ -13,7 +13,7 @@ export const createProjectSchema =z.object({
     }),
     description:z.string({
         message:"description is required"
-    }),
+    }).optional(),
     userId:userId
 });
 export const updateProjectSchema =z.object({
